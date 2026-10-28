@@ -10,6 +10,16 @@
       "language": "zh-CN",
       "description": "对照 MWG 与 81 页课件，包含 45 段证明与推导、16 个交互实验。",
       "updated": "2026-10-26"
+    },
+    {
+      "id": "spence-signaling",
+      "title": "教育如何成为信号：Spence 1973 劳动市场信号深度解读",
+      "category": "economics",
+      "category_label": "经济学",
+      "path": "books/economics/Spence_劳动市场信号_深度解读.html",
+      "language": "zh-CN",
+      "description": "对照原文与教材，解析劳动市场信号、分离均衡与筛选机制，并附交互演示。",
+      "updated": "2026-10-28"
     }
   ]
 }
