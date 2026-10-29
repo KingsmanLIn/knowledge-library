@@ -20,6 +20,46 @@
       "language": "zh-CN",
       "description": "对照原文与教材，解析劳动市场信号、分离均衡与筛选机制，并附交互演示。",
       "updated": "2026-10-28"
+    },
+    {
+      "id": "numerical-analysis",
+      "title": "看得见的数值分析 · 交互动画书",
+      "category": "economics",
+      "category_label": "经济学",
+      "path": "books/economics/numerical-analysis-interactive-book.html",
+      "language": "zh-CN",
+      "description": "数值分析交互动画书：11 章、40 个演示，结合中文讲解、公式、拖动参数与逐步动画。",
+      "updated": "2026-10-28"
+    },
+    {
+      "id": "rck-calibration-pdf",
+      "title": "RCK 模型数值方法与宏观校准：图解课程讲义",
+      "category": "economics",
+      "category_label": "经济学",
+      "path": "books/economics/RCK模型数值方法与宏观校准_图解课程讲义.pdf",
+      "language": "zh-CN",
+      "description": "RCK 模型数值方法与宏观校准的图解课程讲义，适合快速复习与课堂参考。",
+      "updated": "2026-10-28"
+    },
+    {
+      "id": "rck-interactive",
+      "title": "RCK 模型：交互课程讲义",
+      "category": "economics",
+      "category_label": "经济学",
+      "path": "books/economics/RCK模型_交互课程讲义.html",
+      "language": "zh-CN",
+      "description": "RCK 模型的交互课程讲义，适合配合数值方法与宏观校准学习。",
+      "updated": "2026-10-29"
+    },
+    {
+      "id": "game-theory-market-design-ch8",
+      "title": "博弈论与市场设计：第8章交互读本",
+      "category": "economics",
+      "category_label": "经济学",
+      "path": "books/economics/博弈论与市场设计_第8章_交互读本.html",
+      "language": "zh-CN",
+      "description": "面向博弈论与市场设计第8章的交互读本，适合课堂讲解与章节复习。",
+      "updated": "2026-10-29"
     }
   ]
 }
