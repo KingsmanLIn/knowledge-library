@@ -5,14 +5,67 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>知识书库 · Knowledge Library</title>
 <style>
-:root{color-scheme:light dark;--bg:#fbfaf6;--fg:#193238;--muted:#627675;--line:#d6dfd9;--accent:#006c69}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.9 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:980px;margin:0 auto;padding:40px 24px 80px}small{letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}h1{margin:8px 0 8px;font-size:clamp(2rem,4vw,3rem);line-height:1.2}p{margin:0 0 18px;color:var(--fg)}article{border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:24px 0;background:rgba(255,255,255,.35);box-shadow:0 8px 15px rgba(25,50,56,.04)}h2{margin:8px 0 6px;font-size:1.35rem;line-height:1.4}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.95rem}
+:root { color-scheme: light dark; --bg: #fbfaf6; --fg: #193238; --muted: #627675; --line: #d6dfd9; --accent: #006c69; --card: #fff; --badge: #edf4f2; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+main { max-width: 1040px; margin: 0 auto; padding: 48px 22px 80px; }
+small { display: block; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 12px; }
+h1 { margin: 0 0 8px; font-size: clamp(2rem, 3vw, 3rem); line-height: 1.2; }
+p { margin: 0; }
+.kind-badge { display: inline-block; margin: 0 0 10px; padding: 4px 10px; border-radius: 999px; background: var(--badge); color: var(--accent); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+article { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin-top: 18px; box-shadow: 0 6px 22px rgba(25, 50, 56, .04); }
+article h2 { margin: 0 0 10px; font-size: clamp(1.2rem, 2vw, 1.8rem); line-height: 1.4; }
+article h2 a { color: var(--accent); text-decoration: none; }
+article h2 a:hover { text-decoration: underline; }
+article p { color: var(--fg); opacity: .92; }
+.meta { margin-top: 10px; font-size: .84rem; color: var(--muted); }
+footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #172329; --fg: #edf7f5; --muted: #afc4c0; --line: #2e4043; --accent: #67d9d4; --card: #1c2b2d; --badge: #20363a; }
+  body { background: var(--bg); color: var(--fg); }
+  article { background: var(--card); border-color: var(--line); }
+}
 </style>
 </head>
-<body><main>
-<small>KNOWLEDGE LIBRARY</small>
-<h1>知识书库</h1>
-<p>在这里保存知识，展开推导，也让图像帮助理解。</p>
-<article><small>经济学 · ECONOMICS</small><h2><a href="books/economics/mwg-demand-interactive-textbook-fixed.html">从偏好到福利：MWG 需求理论交互教材</a></h2><p>对照 MWG 与 81 页课件，包含 45 段证明与推导、16 个交互实验。</p></article>
-<article><small>经济学 · ECONOMICS</small><h2><a href="books/economics/Spence_劳动市场信号_深度解读.html">教育如何成为信号：Spence 1973 劳动市场信号深度解读</a></h2><p>对照原文与教材，解析劳动市场信号、分离均衡与筛选机制，并附交互演示。</p></article>
-<footer>下载仓库后，在浏览器中打开本页即可浏览书目。教材支持离线阅读。</footer>
-</main></body></html>
+<body>
+<main>
+  <small>KNOWLEDGE LIBRARY</small>
+  <h1>知识书库</h1>
+  <p>在这里保存知识，展开推导，也让图像帮助理解。</p>
+
+  <article>
+    <small>经济学 · ECONOMICS</small>
+    <div class="kind-badge">HTML</div>
+    <h2><a href="books/economics/mwg-demand-interactive-textbook-fixed.html">从偏好到福利：MWG 需求理论交互教材</a></h2>
+    <p>对照 MWG 与 81 页课件，包含 45 段证明与推导、16 个交互实验。</p>
+    <div class="meta">更新于 2026-10-26</div>
+  </article>
+
+  <article>
+    <small>经济学 · ECONOMICS</small>
+    <div class="kind-badge">HTML</div>
+    <h2><a href="books/economics/Spence_劳动市场信号_深度解读.html">教育如何成为信号：Spence 1973 劳动市场信号深度解读</a></h2>
+    <p>对照原文与教材，解析劳动市场信号、分离均衡与筛选机制，并附交互演示。</p>
+    <div class="meta">更新于 2026-10-28</div>
+  </article>
+
+  <article>
+    <small>经济学 · ECONOMICS</small>
+    <div class="kind-badge">HTML</div>
+    <h2><a href="books/economics/numerical-analysis-interactive-book.html">看得见的数值分析 · 交互动画书</a></h2>
+    <p>数值分析交互动画书：11 章、40 个演示，结合中文讲解、公式、拖动参数与逐步动画。</p>
+    <div class="meta">更新于 2026-10-28</div>
+  </article>
+
+  <article>
+    <small>经济学 · ECONOMICS</small>
+    <div class="kind-badge">PDF</div>
+    <h2><a href="books/economics/RCK模型数值方法与宏观校准_图解课程讲义.pdf">RCK 模型数值方法与宏观校准：图解课程讲义</a></h2>
+    <p>RCK 模型数值方法与宏观校准的图解课程讲义，适合快速复习与课堂参考。</p>
+    <div class="meta">更新于 2026-10-28</div>
+  </article>
+
+  <footer>下载仓库后，在浏览器中打开本页即可浏览书目。教材支持离线阅读。</footer>
+</main>
+</body>
+</html>
