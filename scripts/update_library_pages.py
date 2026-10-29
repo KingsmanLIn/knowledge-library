@@ -29,6 +29,15 @@ CATEGORY_LABELS = {
     "other": "其他",
 }
 
+GROUP_TITLE_OVERRIDES = {
+    "RCK 模型_交互课程讲义": "RCK ��型数值方法与宏观校准",
+    "RCK 模型数值方法与宏观校准_图解课程讲义": "RCK 模型数值方法与宏观校准",
+    "从偏好到福利：MWG 需求理论交互教材": "MWG 需求理论",
+    "教育如何成为信号：Spence 1973 劳动市场信号深度解读": "Spence 劳动市场信号",
+    "看得见的数值分析 · 交互动画书": "看得见的数值分析",
+    "博弈论与市场设计_第8章_交互读本": "博弈论与市场设计 第8章",
+}
+
 
 def slugify(value: str) -> str:
     return value.strip().lower().replace(" ", "-")
@@ -112,6 +121,35 @@ def extract_description(path: Path) -> str:
     return "知识文档"
 
 
+def group_title_for(title: str) -> str:
+    value = title.strip()
+    for override_key, override_value in GROUP_TITLE_OVERRIDES.items():
+        if override_key in value or value.startswith(override_key):
+            return override_value
+
+    cleaned = re.sub(r"\s*[:：].*$", "", value)
+    cleaned = re.sub(r"\s*[—–-].*$", "", cleaned)
+    cleaned = re.sub(r"\s*\|\s*.*$", "", cleaned)
+    cleaned = re.sub(r"\s*（.*?）\s*$", "", cleaned)
+    cleaned = cleaned.replace("_", " ")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+
+    if "RCK" in value and "模型" in value:
+        return "RCK 模型数值方法与宏观校准"
+    if "Spence" in value or "劳动市场信号" in value:
+        return "Spence 劳动市场信号"
+    if "MWG" in value or "需求理论" in value:
+        return "MWG 需求理论"
+    if "数值分析" in value:
+        return "看得见的数值分析"
+    if "博弈论与市场设计" in value:
+        return "博弈论与市场设计 第8章"
+
+    if cleaned:
+        return cleaned
+    return value
+
+
 def collect_books() -> list[dict]:
     if not BOOKS_DIR.exists():
         return []
@@ -132,6 +170,7 @@ def collect_books() -> list[dict]:
             {
                 "id": slugify(f"{title}-{kind}"),
                 "title": title,
+                "group": group_title_for(title),
                 "category": category,
                 "category_label": category_label(category),
                 "path": relative_path,
@@ -143,11 +182,30 @@ def collect_books() -> list[dict]:
             }
         )
 
-    return sorted(entries, key=lambda item: (item["category"], item["title"]))
+    return sorted(entries, key=lambda item: (item["category"], item["group"], item["title"]))
+
+
+def group_books(entries: list[dict]) -> list[dict]:
+    grouped: dict[str, dict] = {}
+    for item in entries:
+        key = f"{item['category']}::{item['group']}"
+        group = grouped.setdefault(
+            key,
+            {
+                "category": item["category"],
+                "category_label": item["category_label"],
+                "title": item["group"],
+                "items": [],
+                "description": item["description"],
+            },
+        )
+        group["items"].append(item)
+    return list(grouped.values())
 
 
 def render_readme(entries: list[dict]) -> str:
-    if not entries:
+    grouped = group_books(entries)
+    if not grouped:
         return (
             "# 知识书库 · Knowledge Library\n\n"
             "本仓库用于归档已确认的知识类 HTML 书籍、交互教材与学习资料，便于离线阅读和长期保存。\n\n"
@@ -173,14 +231,19 @@ def render_readme(entries: list[dict]) -> str:
         "",
         "## 书籍目录",
         "",
-        "| 分类 | 书籍 | 格式 | 内容 |",
+        "| 分类 | 主题 | 文件 | 内容 |",
         "| --- | --- | --- | --- |",
     ]
 
-    for item in entries:
-        rows.append(
-            f"| {escape(item['category_label'])} | [{escape(item['title'])}]({item['path']}) | {escape(item['kind'])} | {escape(item['description'])} |"
+    for group in grouped:
+        category = escape(group["category_label"])
+        title = escape(group["title"])
+        links = " / ".join(
+            f"[{escape(item['kind'])} · {escape(item['title'])}]({item['path']})"
+            for item in group["items"]
         )
+        desc = escape(group["description"]) if group["items"] else "知识文档"
+        rows.append(f"| {category} | {title} | {links} | {desc} |")
 
     rows.extend(
         [
@@ -210,16 +273,23 @@ def render_readme(entries: list[dict]) -> str:
 
 
 def render_index_html(entries: list[dict]) -> str:
-    cards = []
-    for item in entries:
-        kind = escape(item["kind"])
-        cards.append(
-            "<article>"
-            f"<small>{escape(item['category_label'])} · {escape(item['category'].upper())}</small>"
-            f"<div class='kind-badge'>{kind}</div>"
-            f"<h2><a href=\"{escape(item['path'], quote=True)}\">{escape(item['title'])}</a></h2>"
-            f"<p>{escape(item['description'])}</p>"
-            f"<div class='meta'>更新于 {escape(item['updated'])}</div>"
+    grouped = group_books(entries)
+    sections = []
+    for group in grouped:
+        links = []
+        for item in group["items"]:
+            label = f"{item['kind']} · {item['title']}"
+            links.append(f"<a href=\"{escape(item['path'], quote=True)}\">{escape(label)}</a>")
+        title = escape(group["title"])
+        desc = escape(group["items"][0]["description"]) if group["items"] else "知识文档"
+        meta = " / ".join(escape(item["updated"]) for item in group["items"])
+        sections.append(
+            "<article class=\"group\">"
+            f"<small>{escape(group['category_label'])} · {escape(group['category'].upper())}</small>"
+            f"<h2>{title}</h2>"
+            f"<div class=\"file-list\">{''.join(f'<div class=\"file-link\">{link}</div>' for link in links)}</div>"
+            f"<p>{desc}</p>"
+            f"<div class='meta'>更新于 {meta}</div>"
             "</article>"
         )
 
@@ -237,41 +307,46 @@ main{{max-width:1040px;margin:0 auto;padding:48px 22px 80px}}
 small{{display:block;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px}}
 h1{{margin:0 0 8px;font-size:clamp(2rem,3vw,3rem);line-height:1.2}}
 p{{margin:0}}
-.kind-badge{{display:inline-block;margin:0 0 10px;padding:4px 10px;border-radius:999px;background:var(--badge);color:var(--accent);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}}
-article{{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:18px;box-shadow:0 6px 22px rgba(25,50,56,.04)}}
-article h2{{margin:0 0 10px;font-size:clamp(1.2rem,2vw,1.8rem);line-height:1.4}}
-article h2 a{{color:var(--accent);text-decoration:none}}
-article h2 a:hover{{text-decoration:underline}}
-article p{{color:var(--fg);opacity:.92}}
+.group{{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:18px;box-shadow:0 6px 22px rgba(25,50,56,.04)}}
+.group h2{{margin:0 0 12px;font-size:clamp(1.25rem,2.2vw,1.8rem);line-height:1.4}}
+.group p{{color:var(--fg);opacity:.92}}
+.file-list{{display:flex;flex-wrap:wrap;gap:10px 14px;margin:0 0 14px}}
+.file-link{{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--badge)}}
+.file-link a{{color:var(--accent);text-decoration:none;font-weight:600}}
+.file-link a:hover{{text-decoration:underline}}
 .meta{{margin-top:10px;font-size:.84rem;color:var(--muted)}}
 footer{{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.95rem}}
 @media (prefers-color-scheme: dark) {{
   :root{{--bg:#172329;--fg:#edf7f5;--muted:#afc4c0;--line:#2e4043;--accent:#67d9d4;--card:#1c2b2d;--badge:#20363a}}
   body{{background:var(--bg);color:var(--fg)}}
-  article{{background:var(--card);border-color:var(--line)}}
+  .group{{background:var(--card);border-color:var(--line)}}
 }}
 </style>
 </head>
-<body><main>
-<small>KNOWLEDGE LIBRARY</small>
-<h1>知识书库</h1>
-<p>在这里保存知识，展开推导，也让图像帮助理解。</p>
-{''.join(cards)}
-<footer>下载仓库后，在浏览器中打开本页即可浏览书目。教材支持离线阅读。</footer>
-</main></body></html>
+<body>
+<main>
+  <small>KNOWLEDGE LIBRARY</small>
+  <h1>知识书库</h1>
+  <p>在这里保存知识，展开推导，也让图像帮助理解。</p>
+  {''.join(sections)}
+  <footer>下载仓库后，在浏览器中打开本页即可浏览书目。教材支持离线阅读。</footer>
+</main>
+</body>
+</html>
 '''
     return html
 
 
 def main() -> None:
     entries = collect_books()
+    grouped = group_books(entries)
     CATALOG_PATH.write_text(
-        json.dumps({"title": "知识书库", "books": entries}, ensure_ascii=False, indent=2) + "\n",
+        json.dumps({"title": "知识书库", "groups": grouped}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     README_PATH.write_text(render_readme(entries), encoding="utf-8")
     INDEX_PATH.write_text(render_index_html(entries), encoding="utf-8")
-    print(f"Updated catalog with {len(entries)} books.")
+    print(f"Updated catalog with {len(grouped)} grouped topics.")
 
 
 if __name__ == "__main__":
